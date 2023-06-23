@@ -13,7 +13,7 @@ lista_de_tarefas: list[dict[str]] = [
 def adicionar_tarefa(prioridade: bool, tarefa: str):
     """
     Adiciona uma tarefa na lista de tarefas
-    Lança exceções caso a rioridapde seja inválida ou a tarefa já exista
+    Lança exceções caso a prioridade seja inválida ou a tarefa já exista
 
     Args:
         prioridade (bool): True se a tarefa tem prioridade alta, False caso contrário
@@ -24,12 +24,13 @@ def adicionar_tarefa(prioridade: bool, tarefa: str):
     # do tipo ValueError com a mensagem "Prioridade inválida"
     # Caso a tarefa já exista na lista, levante uma exceção do tipo ValueError
     # com a mensagem "Tarefa já existe"
-    if prioridade != True or prioridade != False:
-        raise ValueError ("Prioridade Inválida")
-    for item in lista_de_tarefas:
-        if item['tarefa'] == tarefa:
-            raise ValueError("Tarefa já existe")
-    lista_de_tarefas.append({"prioridae": prioridade, "tarefa": tarefa})
+    if prioridade != 0 and prioridade != 1:
+        raise ValueError('Prioridade inválida')
+    for i in lista_de_tarefas:
+        if i['tarefa'].lower() == tarefa.lower():
+            raise ValueError('Tarefa já existe')
+    novo = {'prioridade': prioridade, 'tarefa': tarefa}
+    lista_de_tarefas.append(novo)
 
 
 def remove_tarefas(índices: tuple[int]):
@@ -44,7 +45,16 @@ def remove_tarefas(índices: tuple[int]):
     # TODO: coloque o código aqui para remover um tarefa na lista
     # Caso a tarefa não exista na lista, levante uma exceção do tipo ValueError
     # com a mensagem "Tarefa não existe"
-    raise NotImplementedError("Remover tarefas não implementado")
+    if not lista_de_tarefas:
+        raise ValueError('Não há nada na lista para remover')
+    if índices:
+        for i in range(len(índices)-1, -1, -1):
+            if índices[i] >= len(lista_de_tarefas):
+                raise ValueError('Índice da tarefa inválido')
+            if not lista_de_tarefas[i]:
+                raise ValueError('Não há tarefas com esse índice')
+            lista_de_tarefas.pop(índices[i])
+
 
 
 def encontra_tarefa(tarefa: str) -> int:
@@ -58,7 +68,10 @@ def encontra_tarefa(tarefa: str) -> int:
     # TODO: coloque o código aqui para encontrar um tarefa na lista
     # Caso a tarefa não exista na lista, levante uma exceção do tipo ValueError
     # com a mensagem "Tarefa não existe"
-    raise NotImplementedError("Encontrar tarefas não implementado")
+    for i in range(0, len(lista_de_tarefas)):
+        if lista_de_tarefas[i]['tarefa'].lower() == tarefa.lower():
+            return i
+    raise ValueError('Tarefa não existe')
 
 
 def ordena_por_prioridade():
@@ -73,7 +86,21 @@ def ordena_por_prioridade():
     # não prioritárias.
     # As tarefas prioritárias devem ser ordenadas por ordem alfabética e as
     # tarefas não prioritárias devem ser ordenadas por ordem alfabética.
-    raise NotImplementedError("Ordenar tarefas não implementado")
+    prior = []
+    non_prior = []
+    global lista_de_tarefas
+    for i in lista_de_tarefas:
+        if i['prioridade'] == 0:
+            non_prior.append(i)
+        else:
+            prior.append(i)
+    prior = sorted(prior, key=lambda d: d['tarefa']) 
+    non_prior = sorted(non_prior, key=lambda d: d['tarefa']) 
+    lista_de_tarefas = []
+    for i in prior:
+        lista_de_tarefas.append(i)
+    for i in non_prior:
+        lista_de_tarefas.append(i)
 
 
 def get_lista_de_tarefas():
